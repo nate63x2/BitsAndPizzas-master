@@ -2,6 +2,7 @@ package com.example.gpcorser.bitsandpizzas;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -47,10 +48,12 @@ public class MainActivity extends Activity {
         //Create the actionbar drawer toggle
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer) {
             //called when a drawer has settled in a closed state
+            @Override
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
                 invalidateOptionsMenu();
             }
+            @Override
             //called when a drawer is settled in an open state
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -61,6 +64,27 @@ public class MainActivity extends Activity {
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
+
+        getFragmentManager().addOnBackStackChangedListener(
+                new FragmentManager.OnBackStackChangedListener() {
+                    public void onBackStackChanged() {
+                        FragmentManager fragMan = getFragmentManager();
+                        Fragment fragment = fragMan.findFragmentByTag("visible_fragment");
+
+                        if(fragment instanceof TopFragment)
+                            currentPosition = 0;
+                        else if(fragment instanceof PizzaFragment)
+                            currentPosition = 1;
+                        else if(fragment instanceof PastaFragment)
+                            currentPosition = 2;
+                        else if(fragment instanceof StoresFragment)
+                            currentPosition = 3;
+
+                        setActionBarTitle(currentPosition);
+                        drawerList.setItemChecked(currentPosition, true);
+                    }
+                }
+        );
     }
 
     @Override
